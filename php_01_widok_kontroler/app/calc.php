@@ -55,7 +55,6 @@ if (empty($messages)) { // gdy brak błędów
 	$n = $n_years * 12; // liczba rat
 	$r = $annual_rate / 12 / 100; // miesięczna stopa
 
-	// obliczenie miesięcznej raty (annuitet)
 	if ($r == 0.0) {
 		// brak odsetek
 		$monthly = $P / $n;
@@ -67,7 +66,4 @@ if (empty($messages)) { // gdy brak błędów
 	$result = $monthly;
 }
 
-// 4. Wywołanie widoku z przekazaniem zmiennych
-// - zainicjowane zmienne ($messages,$x,$y,$operation,$result)
-//   będą dostępne w dołączonym skrypcie
 include 'calc_view.php';
