@@ -1,0 +1,24 @@
+html, body {
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  margin: 0; padding: 0; color: #222;
+  background: #fff; line-height: 1.4;
+}
+.container {
+  width: 90%; max-width: 900px; margin: 1.5rem auto;
+}
+header {
+  padding: 1rem 0; border-bottom: 1px solid #ddd;
+}
+.brand { font-size: 2.4rem; font-weight: 700; color: #111; }
+nav { margin-top: 0.5rem; }
+nav a { margin-right: 1rem; color: #5a2d82; text-decoration: none; }
+nav a:hover { text-decoration: underline; }
+.userline { margin: 0.5rem 0; color: #333; }
+h2 { font-size: 1.8rem; color: #111; margin-top: 1.4rem; }
+form label { display: inline-block; width: 220px; margin-bottom: .6rem; }
+input[type=text], input[type=password] { padding: 0.35rem; border: 1px solid #aaa; width: 300px; }
+input[type=submit] { padding: 0.5rem 0.8rem; background: #5a2d82; color: #fff; border: none; cursor: pointer; border-radius: 4px; }
+input[type=submit]:hover { opacity: 0.95; }
+.messages { margin: 20px 0; padding: 10px; background-color: #f8d7da; color: #721c24; border-radius: 6px; width: fit-content; }
+.result { margin: 20px 0; padding: 10px; background-color: #ffeb99; color: #222; border-radius: 6px; width: fit-content; }
+footer { margin-top: 2rem; padding: 1rem 0; border-top: 1px solid #ddd; color: #666; }
