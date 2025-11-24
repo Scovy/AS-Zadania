@@ -1,5 +1,4 @@
 <?php
 class CalcResult {
-    public $monthly;
+	public $result;
 }
-

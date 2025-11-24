@@ -1,0 +1,44 @@
+{extends file="../templates/main.html"}
+
+{block name=content}
+
+<div style="width:90%; margin: 2em auto;">
+	<a href="{$app_url}/app/security/logout.php" class="pure-button pure-button-active">Wyloguj</a>
+</div>
+
+<div style="width:90%; margin: 2em auto;">
+
+<form action="{$app_url}/app/calc.php" method="post" class="pure-form pure-form-stacked">
+	<legend>Kalkulator kredytowy</legend>
+	<fieldset>
+		<label for="id_amount">Kwota kredytu (PLN): </label>
+		<input id="id_amount" type="text" name="amount" value="{$form.amount|default:''}" />
+
+		<label for="id_years">Lata: </label>
+		<input id="id_years" type="text" name="years" value="{$form.years|default:''}" />
+
+		<label for="id_rate">Roczne oprocentowanie (%): </label>
+		<input id="id_rate" type="text" name="rate" value="{$form.rate|default:''}" />
+	</fieldset>
+	<input type="submit" value="Oblicz miesięczną ratę" class="pure-button pure-button-primary" />
+</form>
+
+{if isset($messages)}
+	{if count($messages) > 0} 
+		<ol style="margin-top: 1em; padding: 1em 1em 1em 2em; border-radius: 0.5em; background-color: #f88; width:25em;">
+		{foreach $messages as $msg}
+			<li>{$msg}</li>
+		{/foreach}
+		</ol>
+	{/if}
+{/if}
+
+{if isset($result)}
+<div style="margin-top: 1em; padding: 1em; border-radius: 0.5em; background-color: #ff0; width:25em;">
+	Miesięczna rata: {$result|string_format:"%.2f"} zł
+</div>
+{/if}
+
+</div>
+
+{/block}

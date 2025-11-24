@@ -1,7 +1,6 @@
 <?php
 class CalcForm {
-    public $amount;
-    public $years;
-    public $rate;
+	public $amount;
+	public $years;
+	public $rate;
 }
-

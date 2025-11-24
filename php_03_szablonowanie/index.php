@@ -1,13 +1,9 @@
 <?php
 require_once dirname(__FILE__).'/config.php';
 
-require_once _ROOT_PATH.'/security/check.php';
+// Ochrona całej aplikacji - poniższy skrypt sprawdza, czy użytkownik jest zalogowany
+// jeśli nie, to nadzoruje proces logowania
+include _ROOT_PATH.'/app/security/check.php';
 
-if (isset($smarty)) {
-	if (session_status() == PHP_SESSION_NONE) session_start();
-	$smarty->assign('user', isset($_SESSION['user']) ? $_SESSION['user'] : 'gość');
-	$smarty->display('index.tpl');
-} else {
-	include _ROOT_PATH.'/app/calc_view.php';
-}
-?>
+// Jeśli doszliśmy tutaj, to użytkownik jest zalogowany
+include _ROOT_PATH.'/app/calc.php';
