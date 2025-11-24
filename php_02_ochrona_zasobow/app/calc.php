@@ -2,37 +2,39 @@
 // KONTROLER strony kalkulatora
 require_once dirname(__FILE__).'/../config.php';
 
-// W kontrolerze niczego nie wysyła się do klienta.
-// Wysłaniem odpowiedzi zajmie się odpowiedni widok.
-// Parametry do widoku przekazujemy przez zmienne.
+// Ochrona kontrolera - poniższy skrypt przerwie przetwarzanie w tym punkcie, gdy użytkownik jest niezalogowany
+include _ROOT_PATH.'/app/security/check.php';
 
-// 1. pobranie parametrów (kalkulator kredytowy)
-
-$amount = isset($_REQUEST['amount']) ? $_REQUEST['amount'] : null;
-$years = isset($_REQUEST['years']) ? $_REQUEST['years'] : null;
-$rate = isset($_REQUEST['rate']) ? $_REQUEST['rate'] : null;
-
-// 2. walidacja parametrów z przygotowaniem zmiennych dla widoku
-
-// sprawdzenie, czy parametry zostały przekazane
-if (!(isset($amount) && isset($years) && isset($rate))) {
-	$messages[] = 'Błędne wywołanie aplikacji. Brak jednego z parametrów.';
+// Pobranie parametrów
+function getParams(&$amount, &$years, &$rate){
+	$amount = isset($_REQUEST['amount']) ? $_REQUEST['amount'] : null;
+	$years = isset($_REQUEST['years']) ? $_REQUEST['years'] : null;
+	$rate = isset($_REQUEST['rate']) ? $_REQUEST['rate'] : null;	
 }
 
-// sprawdzenie, czy potrzebne wartości zostały przekazane
-if ($amount === "" || $amount === null) {
-	$messages[] = 'Nie podano kwoty kredytu';
-}
-if ($years === "" || $years === null) {
-	$messages[] = 'Nie podano liczby lat';
-}
-if ($rate === "" || $rate === null) {
-	$messages[] = 'Nie podano oprocentowania';
-}
+// Walidacja parametrów z przygotowaniem zmiennych dla widoku
+function validate(&$amount, &$years, &$rate, &$messages){
+	// Sprawdzenie, czy parametry zostały przekazane
+	if (!(isset($amount) && isset($years) && isset($rate))) {
+		// Sytuacja wystąpi, gdy np. kontroler zostanie wywołany bezpośrednio - nie z formularza
+		return false;
+	}
 
-//nie ma sensu walidować dalej gdy brak parametrów
-if (empty($messages)) {
-	// sprawdzenie, czy wartości są numeryczne
+	// Sprawdzenie, czy potrzebne wartości zostały przekazane
+	if ($amount === "" || $amount === null) {
+		$messages[] = 'Nie podano kwoty kredytu';
+	}
+	if ($years === "" || $years === null) {
+		$messages[] = 'Nie podano liczby lat';
+	}
+	if ($rate === "" || $rate === null) {
+		$messages[] = 'Nie podano oprocentowania';
+	}
+
+	// Nie ma sensu walidować dalej, gdy brak parametrów
+	if (count($messages) != 0) return false;
+	
+	// Sprawdzenie, czy wartości są numeryczne i dodatnie
 	if (!is_numeric($amount) || floatval($amount) <= 0) {
 		$messages[] = 'Kwota kredytu musi być liczbą większą od 0';
 	}
@@ -41,22 +43,32 @@ if (empty($messages)) {
 	}
 	if (!is_numeric($rate) || floatval($rate) < 0) {
 		$messages[] = 'Oprocentowanie musi być liczbą nieujemną';
-	}
+	}	
+
+	if (count($messages) != 0) return false;
+	else return true;
 }
 
-// 3. wykonaj zadanie jeśli wszystko w porządku
-
-if (empty($messages)) { // gdy brak błędów
-	// konwersja parametrów
+// Wykonanie obliczeń
+function process(&$amount, &$years, &$rate, &$messages, &$result){
+	global $role;
+	
+	// Konwersja parametrów
 	$P = floatval($amount);
 	$n_years = intval($years);
 	$annual_rate = floatval($rate);
+
+	// Ograniczenie dla roli 'user'
+	if ($role == 'user' && $annual_rate < 4) {
+		$messages[] = 'Tylko administrator może obliczać kredyty z oprocentowaniem poniżej 4%';
+		return;
+	}
 
 	$n = $n_years * 12; // liczba rat
 	$r = $annual_rate / 12 / 100; // miesięczna stopa
 
 	if ($r == 0.0) {
-		// brak odsetek
+		// Brak odsetek
 		$monthly = $P / $n;
 	} else {
 		$factor = pow(1 + $r, $n);
@@ -66,4 +78,18 @@ if (empty($messages)) { // gdy brak błędów
 	$result = $monthly;
 }
 
+// Definicja zmiennych kontrolera
+$amount = null;
+$years = null;
+$rate = null;
+$result = null;
+$messages = array();
+
+// Pobierz parametry i wykonaj zadanie, jeśli wszystko w porządku
+getParams($amount, $years, $rate);
+if (validate($amount, $years, $rate, $messages)) { // Gdy brak błędów
+	process($amount, $years, $rate, $messages, $result);
+}
+
+// Wywołanie widoku z przekazaniem zmiennych
 include 'calc_view.php';
