@@ -1,0 +1,52 @@
+{extends file="main.html"}
+
+{block name=content}
+
+<div style="width:90%; margin: 2em auto;">
+	<a href="{$conf->action_root}logout" class="pure-button pure-button-active">Wyloguj</a>
+	<span style="float:right;">Użytkownik: {$user->login}, Rola: {$user->role}</span>
+	<a href="{$conf->app_url}" class="pure-button">Strona główna</a>
+</div>
+
+<div style="width:90%; margin: 2em auto;">
+
+	<form action="{$conf->action_root}calcCompute" method="post" class="pure-form pure-form-stacked">
+		<legend>Kalkulator kredytowy</legend>
+		<fieldset>
+			<label for="id_amount">Kwota kredytu (PLN): </label>
+			<input id="id_amount" type="text" name="amount" value="{$form->amount|default:''}" />
+
+			<label for="id_years">Lata: </label>
+			<input id="id_years" type="text" name="years" value="{$form->years|default:''}" />
+
+			<label for="id_rate">Roczne oprocentowanie (%): </label>
+			<input id="id_rate" type="text" name="rate" value="{$form->rate|default:''}" />
+		</fieldset>
+		<input type="submit" value="Oblicz miesięczną ratę" class="pure-button pure-button-primary" />
+	</form>
+
+	{if $msgs->isError()}
+	<ol style="margin-top: 1em; padding: 1em 1em 1em 2em; border-radius: 0.5em; background-color: #f88; width:25em;">
+		{foreach $msgs->getErrors() as $err}
+		<li>{$err}</li>
+		{/foreach}
+	</ol>
+	{/if}
+
+	{if $msgs->isInfo()}
+	<ol style="margin-top: 1em; padding: 1em 1em 1em 2em; border-radius: 0.5em;">
+		{foreach $msgs->getInfos() as $inf}
+		<li>{$inf}</li>
+		{/foreach}
+	</ol>
+	{/if}
+
+	{if isset($res->result)}
+	<div style="margin-top: 1em; padding: 1em; border-radius: 0.5em; background-color: #ff0; width:25em;">
+		Miesięczna rata: {$res->result|string_format:"%.2f"} zł
+	</div>
+	{/if}
+
+</div>
+
+{/block}
